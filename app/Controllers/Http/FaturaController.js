@@ -16,7 +16,7 @@ class FaturaController {
     .with('user')
     .with('servico')
     .with('pagamento')
-    .orderBy('id', 'desc')
+    .orderBy('vencimento', 'asc')
     .fetch();
 
     return fatura;
@@ -67,7 +67,7 @@ class FaturaController {
     const fatura = await Fatura.find(params.id);
 
     let data = request.only([
-      'data_pagamento', 'status',
+      'data_pagamento', 'status', 'obs'
     ]);
     console.log("Update fatura", data)
 
@@ -77,6 +77,7 @@ class FaturaController {
     fatura.merge({
       data_pagamento: data['data_pagamento'],
       status: data['status'],
+      obs: data['obs']
     })
 
     await fatura.save();

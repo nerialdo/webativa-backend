@@ -17,6 +17,7 @@ class PerfilController {
 
   async index ({ request, response, view, auth }) {
     const user = await User.find(auth.user.id)
+    // const roles = await user.getRoles()
     return user;
   }
 
@@ -49,7 +50,7 @@ class PerfilController {
       const user = await User.find(auth.user.id)
       return await user;
 
-    } 
+    }
   }
 
   async update ({ params, request, response, auth}) {
@@ -60,41 +61,43 @@ class PerfilController {
       'rua', 'numero', 'bairro', 'telefone', 'celular_whatsapp'
     ]);
 
+    console.log("Editando perfil", data)
+
     if(data.password){
       //com senha
-      // console.log('aqui1')
-      user.merge({ 
-        name: data.name, 
-        email: data.email, 
+      console.log('aqui1')
+      user.merge({
+        name: data.name,
+        email: data.email,
         password: data.password,
-        cpf_cnpj: data.cpf_cnpj, 
-        cep: data.cep, 
-        pais: data.pais, 
-        estado: data.estado, 
-        cidade: data.cidade, 
-        rua: data.rua, 
-        numero: data.numero, 
-        bairro: data.bairro, 
-        telefone: data.telefone, 
-        celular_whatsapp: data.celular_whatsapp, 
+        cpf_cnpj: data.cpf_cnpj,
+        cep: data.cep,
+        pais: data.pais,
+        estado: data.estado,
+        cidade: data.cidade,
+        rua: data.rua,
+        numero: data.numero,
+        bairro: data.bairro,
+        telefone: data.telefone,
+        celular_whatsapp: data.celular_whatsapp,
       })
 
     }else{
       //Sem senha
-      // console.log('aqui2 a')
-      user.merge({ 
-        name: data.name, 
-        email: data.email, 
-        cpf_cnpj: data.cpf_cnpj, 
-        cep: data.cep, 
-        pais: data.pais, 
-        estado: data.estado, 
-        cidade: data.cidade, 
-        rua: data.rua, 
-        numero: data.numero, 
-        bairro: data.bairro, 
-        telefone: data.telefone, 
-        celular_whatsapp: data.celular_whatsapp, 
+      console.log('aqui2 a')
+      user.merge({
+        name: data.name,
+        email: data.email,
+        cpf_cnpj: data.cpf_cnpj,
+        cep: data.cep,
+        pais: data.pais,
+        estado: data.estado,
+        cidade: data.cidade,
+        rua: data.rua,
+        numero: data.numero,
+        bairro: data.bairro,
+        telefone: data.telefone,
+        celular_whatsapp: data.celular_whatsapp,
       })
     }
 

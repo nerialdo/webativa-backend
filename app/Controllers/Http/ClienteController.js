@@ -17,11 +17,10 @@ class ClienteController {
     console.log("AQUI CLEINTES")
     const cliente = await Cliente.find(auth.user.id)
     const roles = await cliente.getRoles()
-    console.log("roles", roles, auth.user.id)
+    console.log("roles index cliente", roles, auth.user.id)
     if(roles[0] === "admin"){
 
       const cliente = await Cliente.query()
-      .where('usuario_pai', auth.cliente.email)
       .orderBy('id', 'desc')
       .fetch();
 
@@ -41,6 +40,8 @@ class ClienteController {
   }
 
   async kinghost ({ request, response}) {
+    let data = request.all()
+    console.log('data ', data)
     // try {
     //   const res = await Request("https://api.uni5.net/cliente");
     //   return response.status(res.statusCode).send(res.body);

@@ -41,6 +41,14 @@ class ServicoController {
     const roles = await user.getRoles()
     if(roles[0] === "admin"){
 
+      const produto = await Servico.query()
+      .with('user')
+      .with('categoria')
+      .where('id', params.id)
+      .fetch()
+
+      return produto;
+
     } else if(roles[0] === 'empresa'){
 
       const produto = await Servico.query()

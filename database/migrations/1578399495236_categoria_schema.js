@@ -9,6 +9,8 @@ class CategoriaSchema extends Schema {
       table.increments()
       table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
       table.string("nome");
+      table.string("slug");
+      table.string("group");
       table.integer("status");
       table.timestamps()
     })

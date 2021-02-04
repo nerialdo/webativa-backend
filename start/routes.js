@@ -22,7 +22,10 @@ Route.get('/', () => {
 
 Route.post('/sessions', 'SessionController.store').validator('Session');
 Route.post('/sessionscliente', 'SessionController.storeCliente').validator('Session');
+Route.get('/perfil', 'PerfilController.index').middleware('auth');
 Route.post('/perfil', 'PerfilController.store');
+Route.post('/perfil/:id', 'PerfilController.update').middleware('auth');
+Route.get('/tipoUsuario', 'UtilController.tipoUsuario').middleware('auth');
 
 //categoria
 Route.get('/categorias/', 'CategoriaController.index');
@@ -47,6 +50,7 @@ Route.post('/cliente/:id', 'ClienteController.update').middleware('auth');
 Route.delete('/cliente/:id', 'ClienteController.destroy').middleware('auth');
 
 //serviço cliente
+Route.get('/servicos-cliente/', 'ServicoClienteController.index').middleware('auth');
 Route.get('/servicos-cliente/:user', 'ServicoClienteController.index').middleware('auth');
 Route.get('/servico-cliente/:id', 'ServicoClienteController.show').middleware('auth');
 Route.post('/servico-cliente', 'ServicoClienteController.store').middleware('auth');

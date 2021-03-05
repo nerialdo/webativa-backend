@@ -22,16 +22,35 @@ class PerfilController {
   }
 
   async store ({ request, response }) {
-    const data = request.only([
-      'name', 'email', 'password'
+    let data = request.only([
+      'name', 'email', 'password', 'tipo_conta', 'usuario_pai', 'cpf_cnpj', 'cep', 'pais', 'estado', 'cidade',
+      'rua', 'numero', 'bairro', 'telefone', 'celular_whatsapp'
     ]);
+
+    const userExist = await User.findBy("email", data.email);
+    if (userExist) {
+      return response
+        .status(404)
+        .json({ message: "Este email já foi cadastrado. Vá para o login ou solicite um nova senha" });
+    }
 
     const user = await User.create({
       name: data.name,
       email: data.email,
       password: data.password,
+      tipo_conta: data.tipo_conta,
+      cpf_cnpj: data.cpf_cnpj,
+      cep: data.cep,
+      pais: data.pais,
+      estado: data.estado,
+      cidade: data.cidade,
+      rua: data.rua,
+      numero: data.numero,
+      bairro: data.bairro,
+      telefone: data.telefone,
+      celular_whatsapp: data.celular_whatsapp,
     });
-
+    await user.roles().attach(3); // adiciona acl no usuario
     return response.status(201).json(user); // retorna 201 de algo criado
   }
 

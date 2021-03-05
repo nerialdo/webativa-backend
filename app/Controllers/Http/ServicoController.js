@@ -8,10 +8,11 @@ const User = use('App/Models/User');
 class ServicoController {
 
   async index ({ request, response, auth }) {
+    console.log("Buscando serviços")
     const servico = await Servico.query()
     .with('user')
     .with('categoria')
-    .where('user_id', auth.user.id,)
+    .where('user_id', auth.user.id)
     .orderBy('id', 'desc')
     .fetch();
 

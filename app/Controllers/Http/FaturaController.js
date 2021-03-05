@@ -3,6 +3,7 @@
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
+const Usuario = use('App/Models/User');
 const Fatura = use('App/Models/Fatura');
 const {format, subDays} = use('date-fns')
 /**
@@ -10,16 +11,48 @@ const {format, subDays} = use('date-fns')
  */
 class FaturaController {
 
-  async index ({ request, response, view }) {
-    const fatura = await Fatura.query()
-    //.where('user_id', auth.user.email)
-    .with('user')
-    .with('servico')
-    .with('pagamento')
-    .orderBy('vencimento', 'asc')
-    .fetch();
+  async index ({ request, response, auth }) {
 
-    return fatura;
+    const usuario = await Usuario.find(auth.user.id)
+    const roles = await usuario.getRoles()
+    if(roles[0] === "admin"){
+
+      const fatura = await Fatura.query()
+      //.where('user_id', auth.user.email)
+      .with('user')
+      .with('servico')
+      .with('pagamento')
+      .orderBy('vencimento', 'desc')
+      .fetch();
+
+      return fatura;
+
+    }else if(roles[0] === "empresa"){
+
+      const fatura = await Fatura.query()
+      .where('user_id', auth.user.id)
+      .with('user')
+      .with('servico')
+      .with('pagamento')
+      .orderBy('vencimento', 'desc')
+      .fetch();
+
+      return fatura;
+
+    }else if(roles[0] === "usuario"){
+
+      const fatura = await Fatura.query()
+      .where('user_id', auth.user.id)
+      .with('user')
+      .with('servico')
+      .with('pagamento')
+      .orderBy('vencimento', 'desc')
+      .fetch();
+
+      return fatura;
+
+    }
+
   }
 
   async store ({ request, response }) {
@@ -27,7 +60,7 @@ class FaturaController {
       'user_id', 'servico_id', 'servico_clientes_id', 'vencimento', 'valor', 'obs', 'status',
     ]);
 
-    console.log("data cadastro", data)
+    // console.log("data cadastro", data)
 
     //buscar o dia atual
     const dataAtual = format(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -64,30 +97,41 @@ class FaturaController {
 
   async update ({ params, request, response }) {
 
-    const fatura = await Fatura.find(params.id);
+    const usuario = await Usuario.find(auth.user.id)
+    const roles = await usuario.getRoles()
+    if(roles[0] === "admin"){
 
-    let data = request.only([
-      'data_pagamento', 'status', 'obs'
-    ]);
-    console.log("Update fatura", data)
+      const fatura = await Fatura.find(params.id);
 
-    // var data_pagamento = data['data_pagamento']
-    // var valorPreparado = valor.replace(",", ".");
+      let data = request.only([
+        'data_pagamento', 'status', 'obs'
+      ]);
+      // console.log("Update fatura", data)
 
-    fatura.merge({
-      data_pagamento: data['data_pagamento'],
-      status: data['status'],
-      obs: data['obs']
-    })
+      // var data_pagamento = data['data_pagamento']
+      // var valorPreparado = valor.replace(",", ".");
 
-    await fatura.save();
+      fatura.merge({
+        data_pagamento: data['data_pagamento'],
+        status: data['status'],
+        obs: data['obs']
+      })
 
-    return fatura;
+      await fatura.save();
+
+      return fatura;
+
+    }
+
   }
 
   async destroy ({ params, request, response }) {
-    const fatura = await Fatura.findByOrFail('id', params.id);
-    fatura.delete();
+    const usuario = await Usuario.find(auth.user.id)
+    const roles = await usuario.getRoles()
+    if(roles[0] === "admin"){
+      const fatura = await Fatura.findByOrFail('id', params.id);
+      fatura.delete();
+    }
   }
 }
 

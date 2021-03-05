@@ -26,6 +26,7 @@ Route.get('/perfil', 'PerfilController.index').middleware('auth');
 Route.post('/perfil', 'PerfilController.store');
 Route.post('/perfil/:id', 'PerfilController.update').middleware('auth');
 Route.get('/tipoUsuario', 'UtilController.tipoUsuario').middleware('auth');
+Route.get('/very-auth', 'UtilController.veryAuth').middleware('auth');
 
 //categoria
 Route.get('/categorias/', 'CategoriaController.index');
@@ -56,6 +57,7 @@ Route.get('/servico-cliente/:id', 'ServicoClienteController.show').middleware('a
 Route.post('/servico-cliente', 'ServicoClienteController.store').middleware('auth');
 Route.post('/servico-cliente/:id', 'ServicoClienteController.update').middleware('auth');
 Route.delete('/servico-cliente/:id', 'ServicoClienteController.destroy').middleware('auth');
+Route.post('/mod-prox-pag-servico-cliente/', 'UtilServicoClienteController.modProxPag').middleware('auth');
 
 //faturas
 Route.get('/fatura', 'FaturaController.index').middleware('auth');
@@ -81,3 +83,12 @@ Route.get('/metodo-pagamento/:id', 'MetodosPagamentoController.show').middleware
 Route.post('/metodo-pagamento', 'MetodosPagamentoController.store').middleware('auth');
 Route.post('/metodo-pagamento/:id', 'MetodosPagamentoController.update').middleware('auth');
 Route.delete('/metodo-pagamento/:id', 'MetodosPagamentoController.destroy').middleware('auth');
+
+
+Route.get('/enviar-sms/', 'UtilController.sms');
+
+//menu
+Route.get('/menu', 'ManuController.index').middleware('auth');
+
+//Pesquisas
+Route.get('/pesquisar-cliente/:termo', 'UtilPesquisaController.pesquisarClientes').middleware('auth');

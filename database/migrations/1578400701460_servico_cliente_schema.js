@@ -11,8 +11,8 @@ class ServicoClienteSchema extends Schema {
       table.integer('servico_id').unsigned().references('id').inTable('servicos').onDelete('CASCADE').onUpdate('CASCADE');
       table.decimal('valor', 8, 2).notNullable();
       table.integer('dias_carencia');
-      table.timestamp('data_primeiro_pagamento');
-      table.timestamp('data_proximo_pagamento');
+      table.date('data_primeiro_pagamento');
+      table.date('data_proximo_pagamento');
       table.integer('parcelas').defaultTo(1);
       table.decimal('valor_parcela', 8, 2).notNullable();
       table.string('dominio').notNullable();

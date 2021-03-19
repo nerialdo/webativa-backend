@@ -12,8 +12,8 @@ class FaturaSchema extends Schema {
       table.integer('servico_clientes_id').unsigned().references('id').inTable('servico_clientes').onDelete('CASCADE').onUpdate('CASCADE');
       table.integer('mes_referencia')
       table.integer('ano_referencia')
-      table.timestamp('vencimento');
-      table.timestamp('data_pagamento');
+      table.date('vencimento');
+      table.date('data_pagamento');
       table.decimal('valor', 8, 2)
       table.text('obs');
       table.integer('status').defaultTo(1); //0 cancelado, 1 pendente, 2, pago

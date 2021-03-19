@@ -16,7 +16,7 @@ module.exports = {
   | Function - Receives the current origin and should return one of the above values.
   |
   */
-  origin: true,
+  origin: ['https://goofy-minsky-202c97.netlify.app', 'http://localhost:3000'],
 
   /*
   |--------------------------------------------------------------------------

@@ -63,9 +63,10 @@ class FaturaController {
     // console.log("data cadastro", data)
 
     //buscar o dia atual
-    const dataAtual = format(new Date(), "yyyy-MM-dd HH:mm:ss")
+    const dataAtual = format(new Date(data.vencimento), "yyyy-MM-dd HH:mm:ss")
     const mesRef = format(new Date(dataAtual), "MM")
     const anoRef = format(new Date(dataAtual), "yyyy")
+    // console.log("Criando fatura", dataAtual, mesRef, anoRef)
 
     var valor = data['valor']
     // var valorPreparado = valor.replace(",", ".");
@@ -95,7 +96,7 @@ class FaturaController {
     return await fatura;
   }
 
-  async update ({ params, request, response }) {
+  async update ({ params, request, response, auth }) {
 
     const usuario = await Usuario.find(auth.user.id)
     const roles = await usuario.getRoles()
@@ -106,7 +107,7 @@ class FaturaController {
       let data = request.only([
         'data_pagamento', 'status', 'obs'
       ]);
-      // console.log("Update fatura", data)
+      console.log("Update fatura", data)
 
       // var data_pagamento = data['data_pagamento']
       // var valorPreparado = valor.replace(",", ".");
@@ -125,7 +126,7 @@ class FaturaController {
 
   }
 
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, request, response, auth}) {
     const usuario = await Usuario.find(auth.user.id)
     const roles = await usuario.getRoles()
     if(roles[0] === "admin"){

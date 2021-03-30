@@ -16,7 +16,7 @@ class ServicoClienteSchema extends Schema {
       table.integer('parcelas').defaultTo(1);
       table.decimal('valor_parcela', 8, 2).notNullable();
       table.string('dominio').notNullable();
-      table.text('info_add').notNullable();
+      table.text('info_add');
       table.integer('status').defaultTo(1); // 1 Ativa, 0 cancelado
       table.timestamps()
     })

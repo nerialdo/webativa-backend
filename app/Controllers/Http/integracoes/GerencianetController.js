@@ -115,7 +115,7 @@ class GerencianetController {
     let token = ""
     token = await Utils.gerarToken()
     let chave = '4196a44f-9bb6-4c6a-9082-9ef71480a82a'
-    let webhookUrl = 'https://2481c29a5715.ngrok.io/webhook'
+    let webhookUrl = 'https://api.webativa.com.br/webhook'
     var retorno = await GerencianetModel.configurarWebhookPix(token, chave, webhookUrl);
     return retorno;
   }
@@ -133,7 +133,7 @@ class GerencianetController {
     let token = ""
     token = await Utils.gerarToken()
     let chave = '4196a44f-9bb6-4c6a-9082-9ef71480a82a'
-    let webhookUrl = 'https://2481c29a5715.ngrok.io/webhook'
+    let webhookUrl = 'https://api.webativa.com.br/webhook'
 		var retorno = await GerencianetModel.cancelarWebhookPix(token, chave, webhookUrl);
     return retorno;
 	}

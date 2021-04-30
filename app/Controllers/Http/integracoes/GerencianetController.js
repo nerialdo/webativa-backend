@@ -39,7 +39,7 @@ class GerencianetController {
         "original": valor.toString()
       },
       "chave": "4196a44f-9bb6-4c6a-9082-9ef71480a82a",
-      "solicitacaoPagador": "Informe alguma identificação (CPF ou Telefone)"
+      // "solicitacaoPagador": "Informe alguma identificação (CPF ou Telefone)"
     }
     let token = ""
     token = await Utils.gerarToken()
@@ -63,7 +63,7 @@ class GerencianetController {
           "original": "123.45"
       },
       "chave": "+5522999486347",
-      "solicitacaoPagador": "Informe alguma identificação (CPF ou Telefone)"
+      // "solicitacaoPagador": "Informe alguma identificação (CPF ou Telefone)"
     }
     let token = ""
     token = await Utils.gerarToken()

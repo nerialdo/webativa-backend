@@ -131,7 +131,7 @@ class ClienteController {
 
 
     let data = request.only([
-      'name', 'email', 'password', 'usuario_pai', 'cpf_cnpj', 'cep', 'pais', 'estado', 'cidade',
+      'name', 'email', 'password', 'tipo_conta', 'usuario_pai', 'cpf_cnpj', 'cep', 'pais', 'estado', 'cidade',
       'rua', 'numero', 'bairro', 'telefone', 'celular_whatsapp'
     ]);
 
@@ -144,6 +144,7 @@ class ClienteController {
         name: data.name,
         email: data.email,
         password: data.password,
+        tipo_conta: data.tipo_conta,
         usuario_pai: auth.user.id,
         cpf_cnpj: data.cpf_cnpj,
         cep: data.cep,

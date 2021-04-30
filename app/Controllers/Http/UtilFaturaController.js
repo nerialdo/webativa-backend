@@ -64,6 +64,18 @@ class UtilFaturaController {
 
     return fatura;
   }
+
+  async faturasPorCliente ({params, request, response }) {
+    const fatura = await Fatura.query()
+    .where('user_id', params.id)
+    .with('user')
+    .with('servico')
+    .with('pagamento')
+    .orderBy('id', 'desc')
+    .fetch();
+
+    return fatura;
+  }
 }
 
 module.exports = UtilFaturaController

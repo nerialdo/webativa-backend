@@ -5,6 +5,7 @@ const Event = use('Event');
 //envia push para empresasa
 /// as 10:30
 Scheduler.scheduleJob('*/1 * * * *', function() {
+  Event.fire('new::gerarFaturasMesesAtras');
   Event.fire('new::gerarFaturas');
   console.log("Rodou o cron")
 });

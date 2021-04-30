@@ -69,6 +69,7 @@ Route.delete('/fatura/:id', 'FaturaController.destroy').middleware('auth');
 //útil faturas
 Route.get('/util-faturas-vencidas', 'UtilFaturaController.faturasVencidas').middleware('auth');
 Route.get('/util-faturas-pagas/:mes/:ano', 'UtilFaturaController.faturasPagas').middleware('auth');
+Route.get('/faturas-cliente/:id', 'UtilFaturaController.faturasPorCliente').middleware('auth');
 
 //pagamentos
 Route.get('/pagamento', 'PagamentoController.index').middleware('auth');
@@ -92,3 +93,30 @@ Route.get('/menu', 'ManuController.index').middleware('auth');
 
 //Pesquisas
 Route.get('/pesquisar-cliente/:termo', 'UtilPesquisaController.pesquisarClientes').middleware('auth');
+
+//PagamentoPix
+Route.get('/pagamento-pix', 'PagamentoPixController.index').middleware('auth');
+Route.get('/pagamento-pix/:id', 'PagamentoPixController.show').middleware('auth');
+Route.post('/pagamento-pix', 'PagamentoPixController.store').middleware('auth');
+Route.post('/pagamento-pix/:id', 'PagamentoPixController.update').middleware('auth');
+Route.delete('/pagamento-pix/:id', 'PagamentoPixController.destroy').middleware('auth');
+
+//gerencianet
+Route.get('/integra/', 'integracoes/GerencianetController.integra');
+Route.post('/criar-cobranca-pix/', 'integracoes/GerencianetController.criarCobracaPix'); // precisa do :txid
+Route.post('/criar-cobranca-imediata-pix/', 'integracoes/GerencianetController.criarCobracaImediataPix');
+Route.get('/consultar-pix/:txid', 'integracoes/GerencianetController.consultarCobrancaPix');
+Route.get('/gerar-qrcode-pix/:idlocation', 'integracoes/GerencianetController.gerarQRCodeCobrancaPix');
+Route.get('/listar-chaves-pix/', 'integracoes/GerencianetController.listarChavesUsoPix');
+Route.post('/criar-chaves-pix/', 'integracoes/GerencianetController.criarChaveUsoPix');
+Route.put('/config-webhook-pix/', 'integracoes/GerencianetController.configurarWebhookUsoPix');
+Route.get('/consultar-lista-webhook/', 'integracoes/GerencianetController.consultarListaWebhooksUsoPix');
+Route.delete('/cencelar-webhook/', 'integracoes/GerencianetController.cancelarWebhookPixUsoPix');
+Route.get('/listar-cobranca-pix/', 'integracoes/GerencianetController.listarCobrancasUsoPix');
+Route.get('/listar-pix-recbidos/', 'integracoes/GerencianetController.consultarPixRecebidosUsoPix');
+Route.get('/consultar-pix/', 'integracoes/GerencianetController.consultarPIXUsoPix');
+
+
+Route.post('/webhook', 'integracoes/GerencianetController.retornoWebHook');
+Route.post('/webhook/pix', 'integracoes/GerencianetController.retornoWebHookPix');
+

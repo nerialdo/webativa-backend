@@ -104,6 +104,7 @@ class ClienteController {
       telefone: data.telefone,
       celular_whatsapp: data.celular_whatsapp,
     });
+    await cliente.roles().attach(3); // adiciona acl no usuario
     return response.status(201).json(cliente); // retorna 201 de algo criado
   }
 
@@ -178,7 +179,7 @@ class ClienteController {
     }
 
     await cliente.save();
-
+    await cliente.roles().attach(3); // adiciona acl no usuario
     return cliente;
   }
 

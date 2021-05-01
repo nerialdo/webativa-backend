@@ -22,6 +22,7 @@ class ClienteController {
 
       const cliente = await Cliente.query()
       .orderBy('id', 'desc')
+      .where('tipo_conta', 'Usuário')
       .fetch();
 
       return cliente;

@@ -50,19 +50,53 @@ class UtilFaturaController {
     }
 
   }
-  async faturasPagas ({ request, response, view }) {
-    const fatura = await Fatura.query()
-    //.where('user_id', auth.user.email)
-    .with('user')
-    .with('servico')
-    .with('pagamento')
-    .where('status', 2)
-    // .where('mes_referencia', 10)
-    // .where('ano_referencia', 2020)
-    .orderBy('id', 'desc')
-    .fetch();
+  async faturasPagas ({ request, response, auth }) {
+    const user = await User.find(auth.user.id)
+    const roles = await user.getRoles()
+    if(roles[0] === "admin"){
 
-    return fatura;
+      const fatura = await Fatura.query()
+      //.where('user_id', auth.user.email)
+      .with('user')
+      .with('servico')
+      .with('pagamento')
+      .where('status', 2)
+      // .where('mes_referencia', 10)
+      // .where('ano_referencia', 2020)
+      .orderBy('id', 'desc')
+      .fetch();
+
+      return fatura;
+
+    }else if(roles[0] === "empresa"){
+      const fatura = await Fatura.query()
+      //.where('user_id', auth.user.email)
+      .with('user')
+      .with('servico')
+      .with('pagamento')
+      .where('status', 2)
+      // .where('mes_referencia', 10)
+      // .where('ano_referencia', 2020)
+      .orderBy('id', 'desc')
+      .fetch();
+
+      return fatura;
+    }else if(roles[0] === "usuario"){
+      const fatura = await Fatura.query()
+      .where('user_id', auth.user.id)
+      .with('user')
+      .with('servico')
+      .with('pagamento')
+      .where('status', 2)
+      // .where('mes_referencia', 10)
+      // .where('ano_referencia', 2020)
+      .orderBy('id', 'desc')
+      .fetch();
+
+      return fatura;
+    }
+
+
   }
 
   async faturasPorCliente ({params, request, response }) {

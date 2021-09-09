@@ -19,13 +19,13 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 const view = use('View');
 
 class AsaasController {
-
+  
   async consultarCliente  ({ params, request, response }) {
     let data = {'cpfCnpj' : params.cpf_cnpj}
-    console.log("data consultarCliente", data)
+    console.log("data consultarCliente", data, SANDBOX_ASAAS)
     let access_token = ""
     // access_token = '8d695fbb569a6e3a5e7269fee1a437a2a78db7d10abfce52c8b1dd5da6c99966'
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.consultarCliente(access_token, data);
     return retorno;
 
@@ -35,7 +35,7 @@ class AsaasController {
     let data = {'installment_id' : params.installment_id}
     console.log("data consultarParcelamento", data)
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.consultarParcelamento(access_token, data);
     return retorno;
   }
@@ -62,7 +62,7 @@ class AsaasController {
     }
     // console.log("Cadastrando cliente no asaas ", data)
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.cadastrarCliente(access_token, data);
     // console.log('Criando um novo cliente asaas retorno', retorno)
     return retorno
@@ -70,7 +70,7 @@ class AsaasController {
 
   async deletarCobranca  ({params, request, response }) {
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var id = 'pay_6152857367477791'
     var retorno = await Asaas.deletarCobranca(access_token, id);
     return retorno;
@@ -101,7 +101,7 @@ class AsaasController {
     }
  
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var id = 'pay_6152857367477791'
     var retorno = await Asaas.criarCobranca(access_token, data, elementServico);
 
@@ -125,7 +125,7 @@ class AsaasController {
       "primeiroPagamento": dados.primeiroPagamento
     }
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var id = 'pay_6152857367477791'
     var retorno = await Asaas.cobrancaParcelada(access_token, data);
     console.log("retorno cobrancaParcelada ", retorno)
@@ -142,7 +142,7 @@ class AsaasController {
       "value": dados.value,
     }
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.confirmaPagamentoDinheiro(access_token, data);
     console.log("retorno confirmaPagamentoDinheiro ", retorno)
     return retorno;

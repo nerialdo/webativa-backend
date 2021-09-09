@@ -6,7 +6,9 @@ var fs = use("fs");
 const Helpers = use('Helpers');
 const https = use("https");
 const axios = require('axios');
-let urlApi = 'https://sandbox.asaas.com';
+const Env = use('Env')
+const SANDBOX_ASAAS = Env.get('SANDBOX_ASAAS')
+let urlApi = SANDBOX_ASAAS === 'true' ? 'https://sandbox.asaas.com' : 'https://www.asaas.com';
 const {parse, addDays, format, parseISO, formatISO, isLastDayOfMonth} = use('date-fns');
 const { enGB } = use( 'date-fns/locale')
 

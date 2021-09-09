@@ -80,7 +80,7 @@ Event.on('new::faturasProximoAvencer', async (dias) => {
     // console.log("Json ", json)
     const conteudo = `Fique de olho na sua fatura. Passando apenas para lembrar que sua fatura está vencendo em ${dias} dia(s).`;
     const msg = {
-      to: 'nerialdosousa@hotmail.com', // Change to your recipient
+      to: json[0].user.email, // Change to your recipient
       from: 'contato@webativa.com.br', // Change to your verified sender
       subject: `Sua fatura está vencendo em ${dias} dia${dias === '1' ? '' : 's'}`,
       // text: view.render('emails.fatura-criada', { id: '1' }),
@@ -198,7 +198,7 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
       // console.log("Json ", json)
       const conteudo = `Você possui faturas vencidas na WebAtiva, entre no seu painel de cliente e regularize sua situação`;
       const msg = {
-        to: 'nerialdosousa@hotmail.com', // Change to your recipient
+        to: json[0].user.email, // Change to your recipient
         from: 'contato@webativa.com.br', // Change to your verified sender
         subject: 'Você possui faturas vencidas.',
         // text: view.render('emails.fatura-criada', { id: '1' }),
@@ -468,7 +468,7 @@ Event.on('new::gerarFaturas', async () => {
     console.log("Json ", json)
     const conteudo = `Sua fatura foi gerada com sucesso. Evite suspensão. Entre no seu painel de cliente para mais informações`
     const msg = {
-      to: 'nerialdosousa@hotmail.com', // Change to your recipient
+      to: json[0].user.email, // Change to your recipient
       from: 'contato@webativa.com.br', // Change to your verified sender
       subject: 'Sua nova fatura já está disponível',
       // text: view.render('emails.fatura-criada', { id: '1' }),

@@ -51,7 +51,7 @@ Route.post('/cliente/:id', 'ClienteController.update').middleware('auth');
 Route.delete('/cliente/:id', 'ClienteController.destroy').middleware('auth');
 
 //serviço cliente
-Route.get('/servicos-cliente/', 'ServicoClienteController.index').middleware('auth');
+// Route.get('/servicos-cliente/', 'ServicoClienteController.index').middleware('auth');
 Route.get('/servicos-cliente/:user', 'ServicoClienteController.index').middleware('auth');
 Route.get('/servico-cliente/:id', 'ServicoClienteController.show').middleware('auth');
 Route.post('/servico-cliente', 'ServicoClienteController.store').middleware('auth');
@@ -116,7 +116,20 @@ Route.get('/listar-cobranca-pix/', 'integracoes/GerencianetController.listarCobr
 Route.get('/listar-pix-recbidos/', 'integracoes/GerencianetController.consultarPixRecebidosUsoPix');
 Route.get('/consultar-pix/', 'integracoes/GerencianetController.consultarPIXUsoPix');
 
+//Asaas
+Route.get('/cunsultar-cliente-asaas/:cpf_cnpj', 'integracoes/AsaasController.consultarCliente');
+Route.get('/cunsultar-parcelamento/:installment_id', 'integracoes/AsaasController.consultarParcelamento');
+Route.post('/cadastrar-cliente-asaas/', 'integracoes/AsaasController.cadastrarCliente');
+Route.post('/criar-cobranca-unica-asaas/', 'integracoes/AsaasController.cobrancaUnica');
+Route.post('/criar-cobranca-parcelada-asaas/', 'integracoes/AsaasController.cobrancaParcelada');
+Route.post('/consfirmar-pagamento-dinheiro-asaas/:id', 'integracoes/AsaasController.confirmaPagamentoDinheiro');
+Route.delete('/deletar-cobranca-asaas/:id', 'integracoes/AsaasController.deletarCobranca');
+
 
 Route.post('/webhook', 'integracoes/GerencianetController.retornoWebHook');
 Route.post('/webhook/pix', 'integracoes/GerencianetController.retornoWebHookPix');
+Route.post('/webhook/whatsapp', 'integracoes/GerencianetController.retornoWebHookPix');
+Route.get('/webhook/twilio', 'integracoes/TwilioController.retornoTwilio');
+Route.post('/webhook/twilio', 'integracoes/TwilioController.retornoTwilio');
+Route.post('/webhook/asaas', 'integracoes/AsaasController.retornoWebHook');
 

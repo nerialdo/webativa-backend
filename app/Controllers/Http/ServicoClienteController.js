@@ -18,6 +18,7 @@ class ServicoClienteController {
     const roles = await user.getRoles()
     if(roles[0] === "admin"){
       const servicoCliente = await ServicoCliente.query()
+      .with('user')
       .with('servico')
       // .where('id', params.user)
       .where('user_id', params.user)
@@ -29,6 +30,7 @@ class ServicoClienteController {
 
     } else if(roles[0] === "usuario"){
       const servicoCliente = await ServicoCliente.query()
+      .with('user')
       .with('servico')
       // .where('id', params.user)
       .where('user_id', auth.user.id)
@@ -44,17 +46,18 @@ class ServicoClienteController {
     const data = request.only([
       'user_id',
       'servico_id',
+      'recorrencia',
       'valor',
       'dias_carencia',
       'data_primeiro_pagamento',
       'data_proximo_pagamento',
       'parcelas',
       'valor_parcela',
-      'dominio',
+      // 'dominio',
       'info_add',
       'status'
     ]);
-    // console.log("cadastrando", data)
+    console.log("cadastrando serviço para o cliente", data)
     const user = await User.find(auth.user.id)
     const roles = await user.getRoles()
     if(roles[0] === "admin"){
@@ -63,13 +66,14 @@ class ServicoClienteController {
         const servicoCliente = await ServicoCliente.create({
           user_id: data['user_id'], // id do cliente
           servico_id: data['servico_id'],
+          recorrencia: data['recorrencia'],
           valor: data['valor'],
           dias_carencia: data['dias_carencia'],
           data_primeiro_pagamento: data['data_primeiro_pagamento'],
           data_proximo_pagamento: data['data_proximo_pagamento'],
           parcelas: data['parcelas'],
           valor_parcela: data['valor_parcela'],
-          dominio: data['dominio'],
+          // dominio: data['dominio'],
           info_add: data['info_add'],
           status: data['status'],
         });
@@ -79,13 +83,14 @@ class ServicoClienteController {
         const servicoCliente = await ServicoCliente.create({
           user_id: data['user_id'], // id do cliente
           servico_id: data['servico_id'],
+          recorrencia: data['recorrencia'],
           valor: data['valor'],
           dias_carencia: data['dias_carencia'],
           data_primeiro_pagamento: data['data_primeiro_pagamento'],
           data_proximo_pagamento: data['data_proximo_pagamento'],
           parcelas: data['parcelas'],
           valor_parcela: data['valor_parcela'],
-          dominio: data['dominio'],
+          // dominio: data['dominio'],
           info_add: data['info_add'],
           status: data['status'],
         });
@@ -100,6 +105,7 @@ class ServicoClienteController {
     console.log("aqui show", params.id)
     const servicoCliente = await ServicoCliente.query()
       .with('servico')
+      .with('fatura')
       .where('id', params.id)
       .fetch()
 
@@ -113,17 +119,18 @@ class ServicoClienteController {
       const servicoCliente = await ServicoCliente.find(params.id);
 
       const data = request.only([
-        'servico_id', 'valor', 'dias_carencia', 'data_primeiro_pagamento', 'data_proximo_pagamento', 'dominio', 'info_add', 'status'
+        'servico_id', 'recorrencia', 'valor', 'dias_carencia', 'data_primeiro_pagamento', 'data_proximo_pagamento', 'info_add', 'status'
       ]);
-      console.log('editando...',data)
+      console.log('editando...',servicoCliente)
       servicoCliente.merge({
-        user_id: auth.user.id, // id do cliente
-        servico_id: data['servico_id'],
+        // user_id: auth.user.id, // id do cliente
+        // servico_id: data['servico_id'],
         valor: data['valor'],
+        recorrencia: data['recorrencia'],
         dias_carencia: data['dias_carencia'],
         data_primeiro_pagamento: data['data_primeiro_pagamento'],
         data_proximo_pagamento: data['data_proximo_pagamento'],
-        dominio: data['dominio'],
+        // dominio: data['dominio'],
         info_add: data['info_add'],
         status: data['status'],
       })

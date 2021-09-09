@@ -9,13 +9,14 @@ class ServicoClienteSchema extends Schema {
       table.increments()
       table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
       table.integer('servico_id').unsigned().references('id').inTable('servicos').onDelete('CASCADE').onUpdate('CASCADE');
+      table.string('recorrencia');
       table.decimal('valor', 8, 2).notNullable();
       table.integer('dias_carencia');
       table.date('data_primeiro_pagamento');
       table.date('data_proximo_pagamento');
       table.integer('parcelas').defaultTo(1);
       table.decimal('valor_parcela', 8, 2).notNullable();
-      table.string('dominio').notNullable();
+      // table.string('dominio');
       table.text('info_add');
       table.integer('status').defaultTo(1); // 1 Ativa, 0 cancelado
       table.timestamps()

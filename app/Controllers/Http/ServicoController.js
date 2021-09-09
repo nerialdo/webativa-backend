@@ -21,7 +21,7 @@ class ServicoController {
 
   async store ({ request, response, auth }) {
     const data = request.only([
-      'categoria_id', 'nome', 'recorrencia', 'valor'
+      'categoria_id', 'nome', 'valor'
     ]);
     var valor = data['valor']
     var valorPreparado = valor.replace(",", ".");
@@ -30,7 +30,6 @@ class ServicoController {
       user_id: auth.user.id,
       categoria_id: data['categoria_id'],
       nome: data['nome'],
-      recorrencia: data['recorrencia'],
       valor: parseFloat(valorPreparado),
     });
 
@@ -75,7 +74,7 @@ class ServicoController {
 
   async update ({ params, request, response, auth }) {
     const data = request.only([
-      'categoria_id', 'nome', 'recorrencia', 'valor', 'status'
+      'categoria_id', 'nome', 'valor', 'status'
     ]);
     var valor = data['valor']
     var valorPreparado = valor.replace(",", ".");
@@ -87,7 +86,6 @@ class ServicoController {
       servico.merge({
         categoria_id: data['categoria_id'],
         nome: data['nome'],
-        recorrencia: data['recorrencia'],
         valor: parseFloat(valorPreparado),
         status: data['status'],
       });

@@ -125,7 +125,7 @@ Route.post('/criar-cobranca-parcelada-asaas/', 'integracoes/AsaasController.cobr
 Route.post('/consfirmar-pagamento-dinheiro-asaas/:id', 'integracoes/AsaasController.confirmaPagamentoDinheiro');
 Route.delete('/deletar-cobranca-asaas/:id', 'integracoes/AsaasController.deletarCobranca');
 
-
+// webhooks
 Route.post('/webhook', 'integracoes/GerencianetController.retornoWebHook');
 Route.post('/webhook/pix', 'integracoes/GerencianetController.retornoWebHookPix');
 Route.post('/webhook/whatsapp', 'integracoes/GerencianetController.retornoWebHookPix');

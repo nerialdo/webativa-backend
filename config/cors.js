@@ -16,7 +16,7 @@ module.exports = {
   | Function - Receives the current origin and should return one of the above values.
   |
   */
-  origin: ['http://localhost:3000', 'https://conta.webativa.com.br'],
+  origin: ['http://localhost:3000', 'https://conta.webativa.com.br', 'https://api.webativa.com.br'],
 
   /*
   |--------------------------------------------------------------------------

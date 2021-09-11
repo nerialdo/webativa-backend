@@ -22,8 +22,8 @@ const ACCESS_TOKEN_ASAAS_PRODUCION = Env.get('ACCESS_TOKEN_ASAAS_PRODUCION');
 Event.on('new::faturasProximoAvencer', async (dias) => {
   // busca fatura que estão proxímos para vencer
   const dataAtual = format(new Date(), "yyyy-MM-dd")
-  var resultSub = format(addDays(new Date(dataAtual), parseInt(dias) + 1), "yyyy-MM-dd")
-  console.log("Data faturasProximoAvencer", resultSub, parseInt(dias) + 1)
+  var resultSub = format(addDays(new Date(dataAtual), parseInt(dias)), "yyyy-MM-dd")
+  // console.log("Data faturasProximoAvencer", resultSub, parseInt(dias))
   const fatura = await Fatura.query()
     .with('user')
     .with('servico')
@@ -39,31 +39,10 @@ Event.on('new::faturasProximoAvencer', async (dias) => {
       // enviarWhatsApp('9887757873', element.user.name)
     }
     if(element.user.email){
-      enviarEmail(jsonFaturas)
+      enviarEmail(element.user)
     }
   }
-  // const servicoCliente = await ServicoCliente.query()
-  //   .with('user')
-  //   .with('servico')
-  //   .where('data_proximo_pagamento', '=', resultSub) //a data do proximo pagamento precisa ser menor ou igual a data atual
-  //   .where('status', 1)
-  //   .orderBy('id', 'desc')
-  //   .fetch();
-
-  // // transforma em json
-  // const jsonServicoCliente = servicoCliente.toJSON()
-  // console.log("Data jsonServicoCliente", jsonServicoCliente)
-  // for (let f = 0; f < jsonServicoCliente.length; f++) {
-  //   const element = jsonServicoCliente[f];
-  //   // console.log("Data jsonServicoCliente", element)
-  //   if(element.user.celular_whatsapp){
-  //     // enviarWhatsApp('9887757873', element.user.name)
-  //   }
-  //   if(element.user.email){
-  //     enviarEmail(jsonServicoCliente)
-  //   }
-  // }
-
+  
   async function enviarWhatsApp(numero, nome){
     try {
       client.messages.create({
@@ -77,15 +56,15 @@ Event.on('new::faturasProximoAvencer', async (dias) => {
   }
 
   async function enviarEmail(json){
-    // console.log("Json ", json)
+    console.log("Json faturasProximoAvencer", json)
     const conteudo = `Fique de olho na sua fatura. Passando apenas para lembrar que sua fatura está vencendo em ${dias} dia(s).`;
     const msg = {
-      to: json[0].user.email, // Change to your recipient
+      to: json.email, // Change to your recipient
       from: 'contato@webativa.com.br', // Change to your verified sender
       subject: `Sua fatura está vencendo em ${dias} dia${dias === '1' ? '' : 's'}`,
       // text: view.render('emails.fatura-criada', { id: '1' }),
       html: view.render('emails.fatura-vencendo', {
-        nome: json[0].user.name,
+        nome: json.name,
         // dominio: json[0].dominio,
         conteudo
       }),
@@ -100,15 +79,15 @@ Event.on('new::faturasProximoAvencer', async (dias) => {
           async function salvarEmail(){
             try {
               await Email.create({
-                user_id: json.user.id,
-                to: json.user.email,
+                user_id: json.id,
+                to: json.email,
                 from: 'contato@webativa.com.br',
                 subject: `Sua fatura está vencendo em ${dias} dia${dias === '1' ? '' : 's'}`,
                 conteudo: conteudo,
                 status: 'Não Lido'
               });
             } catch (error) {
-              console.log('Error salvar email', error)
+              console.log('Error salvar email faturasProximoAvencer', error)
             }
           }
         }
@@ -121,6 +100,7 @@ Event.on('new::faturasProximoAvencer', async (dias) => {
 });
 
 Event.on('new::gerarFaturasMesesAtras', async () => {
+  console.log("Gerando gerarFaturasMesesAtras")
   // //mês atual
   // const mesAtual = format(new Date(), "MM")
   //buscar o dia atual
@@ -134,6 +114,7 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
   const servicoCliente = await ServicoCliente.query()
     .with('user')
     .with('servico')
+    .where('recorrencia', 'Mensal')
     .where('data_proximo_pagamento', '<=', dataAtual) //a data do proximo pagamento precisa ser menor ou igual a data atual
     .where('status', 1)
     .orderBy('id', 'desc')
@@ -141,16 +122,16 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
 
   // transforma em json
   const jsonServicoCliente = servicoCliente.toJSON()
-
+  // console.log("jsonServicoCliente ", jsonServicoCliente.length, dataAtual)
   // console.log("jsonServicoClienteLength", jsonServicoCliente.length)
   //corre todos os serviços do resultado acima
   for (let s = 0; s < jsonServicoCliente.length; s++) {
     const elementServico = jsonServicoCliente[s];
-    console.log("elementServico ", elementServico)
+    // console.log("elementServico ", elementServico)
     if(elementServico.user.celular_whatsapp){
-      enviarWhatsApp('9887757873', elementServico.user.name)
+      // enviarWhatsApp('9887757873', elementServico.user.name)
     }
-    enviarEmail(jsonServicoCliente)
+    
     // const mesRef = format(new Date(elementServico.data_proximo_pagamento), "MM")
     // const anoRef = format(new Date(elementServico.data_proximo_pagamento), "yyyy")
     // console.log("elementServico", elementServico)
@@ -158,7 +139,7 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
     var diasT = 0
     // for para cada mês de atraso
     var qtoMes = differenceInCalendarMonths(new Date(), elementServico.data_proximo_pagamento)
-    // console.log("qtoMes ", qtoMes)
+    console.log("qtoMes ", qtoMes)
     // const itens = [array com elementos]
     for (let m = 0; m < qtoMes; m++) {
       var resDias = diasT += 30;
@@ -168,42 +149,156 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
       const newAnoRef = format(new Date(dataProxPagParsedDate), "yyyy")
       // console.log(">>>>>>", newMesRef, newAnoRef)
 
+      const mesAnoRef = {
+        'newMesRef': newMesRef,
+        'newAnoRef': newAnoRef,
+        'dataProxPagParsedDate': dataProxPagParsedDate
+      }
+
       //Verifica se a fatura já está criada
       const fatura = await Fatura.query()
         .where('user_id', elementServico.user_id)
         .where('servico_id', elementServico.servico_id)
         .where('mes_referencia', newMesRef)
         .where('ano_referencia', newAnoRef)
-        .where('servico_clientes_id', elementServico.id)
+        .where('servico_cliente_id', elementServico.id)
         .where('status', '!=', 0) //fatura com status 1= pendente, 2: paga, 0= cancelada
         .fetch();
 
       const jsonFaturas = fatura.toJSON()
-      // console.log('jsonFaturas, ', jsonFaturas.length)
+      console.log('jsonFaturas, ', jsonFaturas.length)
       if(jsonFaturas.length === 0){
-        const fatura = await Fatura.create({
-          user_id: elementServico.user_id, // id do cliente
-          servico_id: elementServico.servico_id,
-          servico_clientes_id: elementServico.id,
-          mes_referencia: newMesRef,
-          ano_referencia: newAnoRef,
-          vencimento: addDays(dataProxPagParsedDate, 0),
-          valor: elementServico.valor,
-          status: elementServico.status,
-        });
+        await verificarClienteCadastradoAsaas1(elementServico, mesAnoRef)
+      }else{
+        console.log("Cliente já possui fatura gerada")
       }
     }
 
-    async function enviarEmail(json){
-      // console.log("Json ", json)
+    // verifica no asaas se o cliente já está cadastrado
+    async function verificarClienteCadastradoAsaas1(dados, mesAnoRef){
+      // console.log('verificarClienteCadastradoAsaas', dados)
+      let dataVencimento = format(addDays(new Date(), 5), 'dd/MM/yyyy')
+      var data = {
+        'name': dados.user.name,
+        'email': dados.user.email,
+        'phone': dados.user.telefone,
+        'mobilePhone': dados.user.celular_whatsapp,
+        'address': dados.user.rua,
+        'addressNumber': dados.user.numero,
+        'complement': '',
+        'province': dados.user.bairro,
+        'postalCode': dados.user.cep,
+        'cpfCnpj': dados.user.cpf_cnpj,
+        'personType': 'FISICA',
+        'city': dados.user.cidade,
+        'state': dados.user.estado,
+        'country': dados.user.pais,
+        'observations': '',
+        'value': dados.valor,
+        'description': dados.servico.nome,
+        'externalReference': dados.id,
+        "primeiroPagamento": dataVencimento
+      }
+      let access_token = ""
+      console.log("Consultando cliente asaas")
+      access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+      var retorno = await Asaas.consultarCliente(access_token, data);
+      // console.log("Consultando cliente asaas retorno", retorno)
+      if(retorno.totalCount === 0){
+        // se o cliente não estived cadastrado, se cadastra um novo
+        console.log('Criando um novo cliente')
+        await cadastrarClienteAsaas1(data, dados, mesAnoRef)
+      }else{
+        // se o cliente já estive cadastrado, apanenas cria a fatura
+        console.log('Cliente já está cadastrado')
+        var data2 = {
+          "id": retorno.data[0].id, // identeificação do cliente asaas
+          "billingType": 'BOLETO',
+          // "value" :{
+          //   'elementServico': dados.value
+          // } ,
+          // "description": dados.description,
+          "externalReference": dados.id, // id do serviço
+          "primeiroPagamento": dataVencimento,
+          // "dominio": ''
+        }
+        await criarCobrancasAsaas1(data2, dados, mesAnoRef)
+      }
+    }
+
+    //cadastra novo cliente no asaas
+    async function cadastrarClienteAsaas1(data, elementServico, mesAnoRef){
+      let dataVencimento = format(addDays(new Date(), 5), 'dd/MM/yyyy')
+      let access_token = ""
+      access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+      var retorno = await Asaas.cadastrarCliente(access_token, data);
+      // console.log('Criando um novo cliente asaas retorno', retorno, data, elementServico, mesAnoRef)
+      var data2 = {
+        "id": retorno.id, // identeificação do cliente asaas
+        "billingType": 'BOLETO',
+        // "value" :{
+        //   'elementServico': dados.value
+        // } ,
+        // "description": dados.description,
+        "externalReference": elementServico.id, // id do serviço
+        "primeiroPagamento": dataVencimento,
+        // "dominio": ''
+      }
+      if(retorno){
+        criarCobrancasAsaas1(data2, elementServico, mesAnoRef)
+      }
+    }
+
+    //criar cobrança asaas
+    async function criarCobrancasAsaas1(data, elementServico, mesAnoRef){
+      // console.log("events criarCobrancasAsaas ", data, elementServico, mesAnoRef)
+      let access_token = ""
+      access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+      var retorno = await Asaas.criarCobranca(access_token, data, elementServico);
+      console.log('Criando cobrança asaas retorno', retorno)
+      if(retorno){
+        salavarCobranca1(retorno, elementServico, mesAnoRef)
+      }
+    }
+
+    // salva cobrança no banco de dados
+    async function salavarCobranca1(retorno, elementServico, mesAno){
+      // console.log('elementServico salavarCobranca',retorno, elementServico)
+      const linkFatura = retorno.bankSlipUrl;
+      const linkFaturaAux = retorno.invoiceUrl
+      const fatura = await Fatura.create({
+        user_id: elementServico.user_id, // id do cliente
+        servico_id: elementServico.servico_id,
+        servico_cliente_id: elementServico.id,
+        id_integracao: retorno.id,
+        mes_referencia: mesAno.newMesRef,
+        ano_referencia: mesAno.newAnoRef,
+        vencimento: retorno.dueDate,
+        link_fartura: linkFatura,
+        link_fartura_aux: linkFaturaAux,
+        valor: elementServico.valor,
+        status: elementServico.status,
+      });
+
+      if(elementServico.user.celular_whatsapp){
+          // enviarWhatsApp1('9887757873', element.user.name, element.mes_referencia)
+      }
+      if(fatura){
+        await enviarEmail1(elementServico, linkFatura, linkFaturaAux)
+      }
+    }
+
+
+    async function enviarEmail1(json){
+      console.log("Json email", json, json.user.email)
       const conteudo = `Você possui faturas vencidas na WebAtiva, entre no seu painel de cliente e regularize sua situação`;
       const msg = {
-        to: json[0].user.email, // Change to your recipient
+        to: json.user.email, // Change to your recipient
         from: 'contato@webativa.com.br', // Change to your verified sender
         subject: 'Você possui faturas vencidas.',
         // text: view.render('emails.fatura-criada', { id: '1' }),
         html: view.render('emails.fatura-vencidas', {
-          nome: json[0].user.name,
+          nome: json.user.name,
           // dominio: json[0].dominio,
           conteudo
         }),
@@ -226,18 +321,18 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
                   status: 'Não Lido'
                 });
               } catch (error) {
-                console.log('Error salvar email', error)
+                console.log('Error salvar email gerarFaturasMesesAtras', error)
               }
             }
           }
         })
         .catch((error) => {
-          console.error(error)
+          console.error("Error envio de email gerarFaturasMesesAtras", error, error.response.body)
         })
 
     }
 
-    async function enviarWhatsApp(numero, nome){
+    async function enviarWhatsApp1(numero, nome){
       try {
         client.messages.create({
           from: 'whatsapp:+14155238886',
@@ -248,38 +343,6 @@ Event.on('new::gerarFaturasMesesAtras', async () => {
         console.log("error twilio", error)
       }
     }
-    // for (let m = 0; m < qtoMes; m++) {
-    //   var resDias = diasT += 30;
-    //   const dataProxPagParsedDate = addDays(elementServico.data_proximo_pagamento, resDias);
-    //   const newMesRef = format(new Date(dataProxPagParsedDate), "MM")
-    //   const newAnoRef = format(new Date(dataProxPagParsedDate), "yyyy")
-    //   //console.log(">>>>>>", dataProxPagParsedDate, newMesRef)
-    //   const fatura = await Fatura.query()
-    //   .where('user_id', elementServico.user_id)
-    //   .where('servico_id', elementServico.servico_id)
-    //   .where('mes_referencia', newMesRef)
-    //   .where('servico_clientes_id', elementServico.id)
-    //   .where('status', '!=', 0) //fatura com status 1= pendente, 2: paga, 0= cancelada
-    //   .fetch();
-
-    //   const jsonFaturas = fatura.toJSON()
-
-    //   //console.log('jsonFaturas, ', jsonFaturas, jsonFaturas.length)
-    //   if(jsonFaturas.length === 0){
-    //     //console.log("jsonFaturas zero", jsonFaturas)
-    //     const fatura = await Fatura.create({
-    //       user_id: elementServico.user_id, // id do cliente
-    //       servico_id: elementServico.servico_id,
-    //       servico_clientes_id: elementServico.id,
-    //       mes_referencia: newMesRef,
-    //       ano_referencia: newAnoRef,
-    //       vencimento: addDays(dataProxPagParsedDate, 0),
-    //       valor: elementServico.valor,
-    //       status: elementServico.status,
-    //     });
-    //     // console.log('retorno gerarFaturasMesesAtras', fatura)
-    //   }
-    // }
   }
 
 });
@@ -291,6 +354,8 @@ Event.on('new::gerarFaturas', async () => {
   ///subtrai qto do dia atual
   var resultoAddDiasUm = format(new Date(dataAtual), "yyyy-MM-dd")
   var resultoAddDiasDois = format(addDays(new Date(dataAtual), 10), "yyyy-MM-dd")
+  console.log("resultoAddDiasUm ", resultoAddDiasUm)
+  console.log("resultoAddDiasDois ", resultoAddDiasDois)
   // busca todos os serviços que estão com data menor ou igual a data com a subtração de dias
   const servicoCliente = await ServicoCliente.query()
     .with('user')
@@ -305,16 +370,11 @@ Event.on('new::gerarFaturas', async () => {
   /// transforma em json
   const jsonServicoCliente = servicoCliente.toJSON()
 
-  // console.log("jsonServicoCliente", jsonServicoCliente)
+  console.log("jsonServicoCliente", jsonServicoCliente.length)
 
   for (let s = 0; s < jsonServicoCliente.length; s++) {
     const elementServico = jsonServicoCliente[s];
     ///percorre cada serviço
-    // for (let s = 0; s < elementServico.length; s++) {
-      // const elementServico = jsonServicoCliente[s];
-      // console.log("jsonServicoCliente", elementServico)
-
-      // const dataProxPagParsedDate = addDays(elementServico.data_proximo_pagamento, elementServico.dias_carencia);
       const dataProxPagParsedDate = addDays(elementServico.data_proximo_pagamento, 0);
       // console.log('dataProxPagParsedDate', dataProxPagParsedDate)
       const newMesRef = format(new Date(elementServico.data_proximo_pagamento), "MM")
@@ -344,49 +404,13 @@ Event.on('new::gerarFaturas', async () => {
       /// se a quantidade de fatura for 0 (ZERO) se cadastra
       if(jsonFaturas.length === 0){
         console.log('Gerando fatura')
-        // const faturaCriada = await Fatura.create({
-        //   user_id: elementServico.user_id, // id do cliente
-        //   servico_id: elementServico.servico_id,
-        //   servico_cliente_id: elementServico.id,
-        //   mes_referencia: newMesRef,
-        //   ano_referencia: newAnoRef,
-        //   vencimento: dataProxPagParsedDate,
-        //   valor: elementServico.valor,
-        //   status: elementServico.status,
-        // });
-
-        // const jsonFaturas = faturaCriada.toJSON()
-        // buscarInfoFaturaCliente(jsonFaturas, elementServico)
-        // console.log('retorno fatura gerada gerarFaturas', jsonFaturas)
         verificarClienteCadastradoAsaas(elementServico, mesAnoRef)
-
       }
-    // }
   }
-
-  // async function buscarInfoFaturaCliente(dadosFatura, elementServico){
-  //   const fatura = await Fatura.query()
-  //     .with('user')
-  //     .with('servico')
-  //     .where('id', dadosFatura.id)
-  //     .where('status', '!=', 0) //fatura com status 1= pendente, 2: paga, 0= cancelada
-  //     .fetch();
-  //     const jsonFatura = fatura.toJSON()
-  //     for (let f = 0; f < jsonFatura.length; f++) {
-  //       const element = jsonFatura[f];
-  //       // console.log('retorno fatura criada gerarFaturas', element)
-  //       verificarClienteCadastradoAsaas(element, elementServico )
-  //       if(element.user.celular_whatsapp){
-  //         enviarWhatsApp('9887757873', element.user.name, element.mes_referencia)
-  //       }
-  //       // ///////enviarEmail(jsonFatura)
-  //     }
-  // }
-
   // verifica no asaas se o cliente já está cadastrado
   async function verificarClienteCadastradoAsaas(dados, mesAnoRef){
-    // console.log('verificarClienteCadastradoAsaas', dados)
-
+    let dataVencimento = format(addDays(new Date(dados.data_proximo_pagamento), 5), 'dd/MM/yyyy')
+    // console.log('verificarClienteCadastradoAsaas', dados, dataVencimento)
     var data = {
       'name': dados.user.name,
       'email': dados.user.email,
@@ -408,35 +432,67 @@ Event.on('new::gerarFaturas', async () => {
       'externalReference': dados.id,
     }
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.consultarCliente(access_token, data);
     if(retorno.totalCount === 0){
       // se o cliente não estived cadastrado, se cadastra um novo
       console.log('Criando um novo cliente')
-      cadastrarClienteAsaas(data, dados, mesAnoRef)
+      await cadastrarClienteAsaas(data, dados, mesAnoRef, dataVencimento)
     }else{
       // se o cliente já estive cadastrado, apanenas cria a fatura
       console.log('Cliente já está cadastrado', retorno.data[0])
-      criarCobrancasAsaas(retorno.data[0], dados, mesAnoRef)
+      var data2 = {
+        "id": retorno.data[0].id, // identeificação do cliente asaas
+        "billingType": 'BOLETO',
+        // "value" :{
+        //   'elementServico': dados.value
+        // } ,
+        // "description": dados.description,
+        "externalReference": dados.id, // id do serviço
+        "primeiroPagamento": dataVencimento,
+        // "dominio": ''
+      }
+      await criarCobrancasAsaas(data2, dados, mesAnoRef)
     }
   }
 
   //cadastra novo cliente no asaas
-  async function cadastrarClienteAsaas(data, elementServico, mesAnoRef){
+  async function cadastrarClienteAsaas(data, elementServico, mesAnoRef, dataVencimento){
+    // let access_token = ""
+    // access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    // var retorno = await Asaas.cadastrarCliente(access_token, data);
+    // console.log('Criando um novo cliente asaas retorno', retorno)
+    // criarCobrancasAsaas(retorno, elementServico, mesAnoRef)
+
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.cadastrarCliente(access_token, data);
-    console.log('Criando um novo cliente asaas retorno', retorno)
-    criarCobrancasAsaas(retorno, elementServico, mesAnoRef)
+    // console.log('Criando um novo cliente asaas retorno', retorno, data, elementServico, mesAnoRef)
+    var data2 = {
+      "id": retorno.id, // identeificação do cliente asaas
+      "billingType": 'BOLETO',
+      // "value" :{
+      //   'elementServico': dados.value
+      // } ,
+      // "description": dados.description,
+      "externalReference": elementServico.id, // id do serviço
+      "primeiroPagamento": dataVencimento,
+      // "dominio": ''
+    }
+    if(retorno){
+      criarCobrancasAsaas(data2, elementServico, mesAnoRef)
+    }
   }
 
   //criar cobrança asaas
   async function criarCobrancasAsaas(data, elementServico, mesAnoRef){
     let access_token = ""
-    access_token = SANDBOX_ASAAS ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
+    access_token = SANDBOX_ASAAS === 'true' ? ACCESS_TOKEN_ASAAS_SANDBOX : ACCESS_TOKEN_ASAAS_PRODUCION
     var retorno = await Asaas.criarCobranca(access_token, data, elementServico);
-    // console.log('Criando cobrança asaas retorno', retorno)
-    salavarCobranca(retorno, elementServico, mesAnoRef)
+    console.log('Criando cobrança asaas retorno', retorno)
+    if(retorno){
+      await salavarCobranca(retorno, elementServico, mesAnoRef)
+    }
   }
 
   // salva cobrança no banco de dados
@@ -451,7 +507,7 @@ Event.on('new::gerarFaturas', async () => {
       id_integracao: retorno.id,
       mes_referencia: mesAno.newMesRef,
       ano_referencia: mesAno.newAnoRef,
-      vencimento: addDays(mesAno.dataProxPagParsedDate, 2),
+      vencimento: retorno.dueDate,
       link_fartura: linkFatura,
       link_fartura_aux: linkFaturaAux,
       valor: elementServico.valor,
@@ -459,16 +515,16 @@ Event.on('new::gerarFaturas', async () => {
     });
 
     if(elementServico.user.celular_whatsapp){
-        enviarWhatsApp('9887757873', element.user.name, element.mes_referencia)
+      // await enviarWhatsApp('9887757873', element.user.name, element.mes_referencia)
     }
-    enviarEmail(elementServico, linkFatura, linkFaturaAux)
+    await enviarEmail(elementServico, linkFatura, linkFaturaAux)
   }
 
   async function enviarEmail(json, linkFatura, linkFaturaAux){
     console.log("Json ", json)
-    const conteudo = `Sua fatura foi gerada com sucesso. Evite suspensão. Entre no seu painel de cliente para mais informações`
+    const conteudo = `Sua fatura já está disponível. Entre no seu painel de cliente para mais informações`
     const msg = {
-      to: json[0].user.email, // Change to your recipient
+      to: json.user.email, // Change to your recipient
       from: 'contato@webativa.com.br', // Change to your verified sender
       subject: 'Sua nova fatura já está disponível',
       // text: view.render('emails.fatura-criada', { id: '1' }),
@@ -495,7 +551,7 @@ Event.on('new::gerarFaturas', async () => {
               status: 'Não Lido'
             });
           } catch (error) {
-            console.log('Error salvar email', error)
+            console.log('Error salvar email salavarCobranca', error)
           }
         }
       })

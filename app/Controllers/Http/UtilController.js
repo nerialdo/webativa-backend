@@ -2,7 +2,24 @@
 const User = use('App/Models/User');
 const AWS = require('aws-sdk');
 const Env = use('Env')
+const Event = use('Event');
 class UtilController {
+
+  async gerarFaturasAtrasadas (auth){
+    Event.fire('new::gerarFaturasMesesAtras');
+    return 200
+  }
+
+  async faturasProximoAvencer (auth){
+    Event.fire('new::faturasProximoAvencer', ('2'));
+    return 200
+  }
+
+  async gerarFaturas (auth){
+    Event.fire('new::gerarFaturas');
+    return 200
+  }
+
   async tipoUsuario ({ request, response, view, auth }) {
     const user = await User.find(auth.user.id)
     const roles = await user.getRoles()

@@ -4,7 +4,7 @@ const Event = use('Event');
 
 //envia push para empresasa
 /// as 10:30
-Scheduler.scheduleJob('1 * * * * *', function() {
+Scheduler.scheduleJob('00 04 * * *', function() {
   console.log("Rodou o cron")
   // Event.fire('new::gerarFaturasMesesAtras');
   Event.fire('new::gerarFaturas');
@@ -15,11 +15,11 @@ Scheduler.scheduleJob('00 07 * * *', function() {
   Event.fire('new::gerarFaturasMesesAtras');
 
 });
-Scheduler.scheduleJob('00 08 * * *', function() {
-  console.log("Rodou o cron das 08 h")
-  Event.fire('new::gerarFaturas');
+// Scheduler.scheduleJob('00 08 * * *', function() {
+//   console.log("Rodou o cron das 08 h")
+//   Event.fire('new::gerarFaturas');
 
-});
+// });
 Scheduler.scheduleJob('00 09 * * *', function() {
   console.log("Rodou o cron das 09 h")
   Event.fire('new::faturasProximoAvencer', ('2'));

@@ -125,6 +125,12 @@ Route.post('/criar-cobranca-parcelada-asaas/', 'integracoes/AsaasController.cobr
 Route.post('/consfirmar-pagamento-dinheiro-asaas/:id', 'integracoes/AsaasController.confirmaPagamentoDinheiro');
 Route.delete('/deletar-cobranca-asaas/:id', 'integracoes/AsaasController.deletarCobranca');
 
+
+//gerando faturas
+Route.get('/gerar-faturas-atrasadas', 'UtilController.gerarFaturasAtrasadas');
+Route.get('/faturas-proxim-avencer', 'UtilController.faturasProximoAvencer');
+Route.get('/gerar-faturas', 'UtilController.gerarFaturas');
+
 // webhooks
 Route.post('/webhook', 'integracoes/GerencianetController.retornoWebHook');
 Route.post('/webhook/pix', 'integracoes/GerencianetController.retornoWebHookPix');

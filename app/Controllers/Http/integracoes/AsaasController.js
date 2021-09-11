@@ -174,7 +174,7 @@ class AsaasController {
         // enviar email para cliente de fatura paga
         const jsonFatura = fatura.toJSON()
         console.log('editou fatura ', jsonFatura)
-        editarProximoVencimento(jsonFatura.servico_cliente_id)
+        await editarProximoVencimento(jsonFatura.servico_cliente_id)
         return 200
       default:
         return 200
@@ -186,7 +186,7 @@ class AsaasController {
         const servicoCliente = await ServicoCliente.find(id);
         const jsonServicoCliente = servicoCliente.toJSON()
         var data_proximo_pagamento =jsonServicoCliente.data_proximo_pagamento;
-        var proximoPagamento = format(addDays(new Date(data_proximo_pagamento), 31), "yyyy-MM-dd")
+        var proximoPagamento = format(addDays(new Date(data_proximo_pagamento), 30), "yyyy-MM-dd")
         console.log('jsonServicoCliente ', jsonServicoCliente, jsonServicoCliente.data_proximo_pagamento)
         console.log('dia add  ', proximoPagamento)
         

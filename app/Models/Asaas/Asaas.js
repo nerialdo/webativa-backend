@@ -14,7 +14,7 @@ const { enGB } = use( 'date-fns/locale')
 
 class Asaa extends Model {
   static consultarCliente(access_token, data) {
-    console.log("access_token, access_token", access_token, data.cpfCnpj)
+    // console.log("access_token, access_token", access_token, data.cpfCnpj)
 		let requisicao = {
 			method: 'GET',
       url: urlApi +'/api/v3/customers?&cpfCnpj='+data.cpfCnpj,
@@ -26,7 +26,7 @@ class Asaa extends Model {
 
 		const response = axios(requisicao)
 			.then((response) => {
-				console.log('response consultarCobranca', response.data);
+				// console.log('response consultarCliente', response.data);
 				return response.data;
 			})
 			.catch((error) => {
@@ -108,9 +108,12 @@ class Asaa extends Model {
   }
 
   static criarCobranca(access_token, data, elementServico) {
+    // console.log("data model criarCobranca data", data)
+    // console.log("data model criarCobranca elementServico", elementServico)
     const parsed = parse(data.primeiroPagamento, 'P', new Date(), { locale: enGB })
     const dataVencimento = format(parsed, 'yyyy-MM-dd')
-    console.log("customerId", data, elementServico)
+    // console.log("customerId", data, elementServico)
+    // console.log("dataVencimento", dataVencimento)
 
     var dadosInsert = {
       "customer": data.id, // identificação do cliente asaas
